@@ -1,0 +1,18 @@
+<launch>
+    <rosparam command="load" 
+        file="$(find example_motion_task_config)/param/safety_config.yaml" />
+
+    <arg name="bond_id_namespace" default="safety_bonds" />
+    
+    <include file="$(find robot_motions_server_ros)/launch/motion_server.launch">
+        <arg name="bond_id_namespace" value="$(arg bond_id_namespace)" />
+    </include>
+    
+    <node name="test_action_client" pkg="example_motion_task_config" 
+            type="test_action_client.py">
+    </node>
+    <include file="$(find ORB_SLAM2)/launch/ORB_SLAM2.launch" />
+    <include file="$(find mavros)/launch/px4.launch" />
+    <node pkg="rosbag" type="record" name="SLAM_data"
+       args="record  /mavros/local_position/odom /orb_pose /zed/left/image_rect_color"/>
+</launch>
